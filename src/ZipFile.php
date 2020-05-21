@@ -372,6 +372,20 @@ class ZipFile implements ZipFileInterface
         return $this->zipContainer->getEntries();
     }
 
+    public function transcoding($filename, $iswin=null){
+        $encodes = ['UTF-8','GBK','BIG5','CP936'];
+        $encoding = mb_detect_encoding($filename,$encodes);
+        if($encoding == 'UTF-8') return $filename;
+        if(is_null($iswin)) $iswin = DIRECTORY_SEPARATOR == '/';  //linux
+        $encoding = mb_detect_encoding($filename,['UTF-8','GBK','BIG5','CP936']);
+        if ($iswin){    //linux
+            $filename = iconv($encoding,'UTF-8',$filename);
+        }else{  //win
+            $filename = iconv($encoding,'GBK',$filename);
+        }
+        return $filename;
+    }
+
     /**
      * Extract the archive contents (unzip).
      *
@@ -442,6 +456,8 @@ class ZipFile implements ZipFileInterface
             $unixMode = $entry->getUnixMode();
             $entryName = FilesUtil::normalizeZipPath($entryName);
             $file = $destDir . \DIRECTORY_SEPARATOR . $entryName;
+            
+            $file = $this->transcoding($file);
 
             if (\DIRECTORY_SEPARATOR === '\\') {
                 $file = str_replace('/', '\\', $file);

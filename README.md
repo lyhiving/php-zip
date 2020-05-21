@@ -2,14 +2,18 @@
 ========
 `PhpZip` is a php-library for extended work with ZIP-archives.
 
-[![Build Status](https://travis-ci.org/Ne-Lexa/php-zip.svg?branch=master)](https://travis-ci.org/Ne-Lexa/php-zip)
-[![Code Coverage](https://scrutinizer-ci.com/g/Ne-Lexa/php-zip/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Ne-Lexa/php-zip/?branch=master)
-[![Latest Stable Version](https://poser.pugx.org/nelexa/zip/v/stable)](https://packagist.org/packages/nelexa/zip)
-[![Total Downloads](https://poser.pugx.org/nelexa/zip/downloads)](https://packagist.org/packages/nelexa/zip)
+[![Build Status](https://travis-ci.org/lyhiving/php-zip.svg?branch=master)](https://travis-ci.org/lyhiving/php-zip)
+[![Code Coverage](https://scrutinizer-ci.com/g/lyhiving/php-zip/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/lyhiving/php-zip/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/lyhiving/zip/v/stable)](https://packagist.org/packages/lyhiving/zip)
+[![Total Downloads](https://poser.pugx.org/lyhiving/zip/downloads)](https://packagist.org/packages/lyhiving/zip)
 [![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.5-8892BF.svg)](https://php.net/)
-[![License](https://poser.pugx.org/nelexa/zip/license)](https://packagist.org/packages/nelexa/zip)
+[![License](https://poser.pugx.org/lyhiving/zip/license)](https://packagist.org/packages/lyhiving/zip)
 
 [Russian Documentation](README.RU.md)
+
+`ONLY MORE SUPPORT FOR CHINESE ENCODE`
+
+Copyright belong to [Ne-Lexa/php-zip](https://github.com/Ne-Lexa/php-zip)
 
 Table of contents
 -----------------
@@ -71,9 +75,9 @@ Table of contents
 - Optional php-extension `openssl` or `mcrypt` for `WinZip Aes Encryption` support.
 
 ### <a name="Installation"></a> Installation
-`composer require nelexa/zip`
+`composer require lyhiving/zip`
 
-Latest stable version: [![Latest Stable Version](https://poser.pugx.org/nelexa/zip/v/stable)](https://packagist.org/packages/nelexa/zip)
+Latest stable version: [![Latest Stable Version](https://poser.pugx.org/lyhiving/zip/v/stable)](https://packagist.org/packages/lyhiving/zip)
 
 ### <a name="Examples"></a> Examples
 ```php
@@ -789,7 +793,7 @@ Run the tests:
 vendor/bin/phpunit
 ```
 ### <a name="Changelog"></a> Changelog
-Changes are documented in the [releases page](https://github.com/Ne-Lexa/php-zip/releases).
+Changes are documented in the [releases page](https://github.com/lyhiving/php-zip/releases).
 
 ### <a name="Upgrade"></a> Upgrade
 #### <a name="Upgrade-v2-to-v3"></a> Upgrade version 2 to version 3.0
@@ -797,13 +801,13 @@ Update the major version in the file `composer.json` to `^3.0`.
 ```json
 {
     "require": {
-        "nelexa/zip": "^3.0"
+        "lyhiving/zip": "^3.0"
     }
 }
 ```
 Then install updates using `Composer`:
 ```bash
-composer update nelexa/zip
+composer update lyhiving/zip
 ```
 Update your code to work with the new version:
 - Class `ZipOutputFile` merged to `ZipFile` and removed.

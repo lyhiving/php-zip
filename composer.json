@@ -1,7 +1,7 @@
 {
-    "name": "nelexa/zip",
+    "name": "lyhiving/zip",
     "type": "library",
-    "description": "PhpZip is a php-library for extended work with ZIP-archives. Open, create, update, delete, extract and get info tool. Supports appending to existing ZIP files, WinZip AES encryption, Traditional PKWARE Encryption, ZipAlign tool, BZIP2 compression, external file attributes and ZIP64 extensions. Alternative ZipArchive. It does not require php-zip extension.",
+    "description": "Modify for Chinese encode. PhpZip is a php-library for extended work with ZIP-archives. Open, create, update, delete, extract and get info tool. Supports appending to existing ZIP files, WinZip AES encryption, Traditional PKWARE Encryption, ZipAlign tool, BZIP2 compression, external file attributes and ZIP64 extensions. Alternative ZipArchive. It does not require php-zip extension.",
     "keywords": [
         "zip",
         "unzip",
@@ -11,11 +11,11 @@
         "zipalign",
         "ziparchive"
     ],
-    "homepage": "https://github.com/Ne-Lexa/php-zip",
+    "homepage": "https://github.com/lyhiving/php-zip",
     "license": "MIT",
     "authors": [
         {
-            "name": "Ne-Lexa",
+            "name": "Ne-Lexa,lyhiving",
             "email": "alexey@nelexa.ru",
             "role": "Developer"
         }
