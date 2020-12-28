@@ -1,9 +1,5 @@
 <?php
 
-/** @noinspection AdditionOperationOnArraysInspection */
-
-/** @noinspection PhpUsageOfSilenceOperatorInspection */
-
 namespace PhpZip;
 
 use PhpZip\Constants\UnixStat;
@@ -143,7 +139,7 @@ class ZipFile implements ZipFileInterface
 
         if (!($handle = fopen('php://temp', 'r+b'))) {
             // @codeCoverageIgnoreStart
-            throw new ZipException("Can't open temp stream.");
+            throw new ZipException('A temporary resource cannot be opened for writing.');
             // @codeCoverageIgnoreEnd
         }
         fwrite($handle, $data);
@@ -258,8 +254,8 @@ class ZipFile implements ZipFileInterface
      *
      * @param string $entryName
      *
-     * @throws ZipException
      * @throws ZipEntryNotFoundException
+     * @throws ZipException
      *
      * @return string
      */
@@ -274,8 +270,8 @@ class ZipFile implements ZipFileInterface
      * @param string      $entryName
      * @param string|null $comment
      *
-     * @throws ZipEntryNotFoundException
      * @throws ZipException
+     * @throws ZipEntryNotFoundException
      *
      * @return ZipFile
      */
@@ -291,8 +287,8 @@ class ZipFile implements ZipFileInterface
      *
      * @param string $entryName
      *
-     * @throws ZipEntryNotFoundException
      * @throws ZipException
+     * @throws ZipEntryNotFoundException
      *
      * @return string
      */
@@ -310,8 +306,8 @@ class ZipFile implements ZipFileInterface
     /**
      * @param string $entryName
      *
-     * @throws ZipEntryNotFoundException
      * @throws ZipException
+     * @throws ZipEntryNotFoundException
      *
      * @return resource
      */
@@ -328,8 +324,8 @@ class ZipFile implements ZipFileInterface
      *
      * @param string|ZipEntry $entryName
      *
-     * @throws ZipException
      * @throws ZipEntryNotFoundException
+     * @throws ZipException
      *
      * @return ZipInfo
      */
@@ -372,6 +368,7 @@ class ZipFile implements ZipFileInterface
         return $this->zipContainer->getEntries();
     }
 
+    //Add Chinese Support by @yhiving START 
     public function transcoding($filename, $iswin=null){
         $encodes = ['UTF-8','GBK','BIG5','CP936'];
         $encoding = mb_detect_encoding($filename,$encodes);
@@ -385,6 +382,7 @@ class ZipFile implements ZipFileInterface
         }
         return $filename;
     }
+    //Add Chinese Support by @yhiving END 
 
     /**
      * Extract the archive contents (unzip).
@@ -425,6 +423,7 @@ class ZipFile implements ZipFileInterface
         $defaultOptions = [
             ZipOptions::EXTRACT_SYMLINKS => false,
         ];
+        /** @noinspection AdditionOperationOnArraysInspection */
         $options += $defaultOptions;
 
         $zipEntries = $this->zipContainer->getEntries();
@@ -456,12 +455,9 @@ class ZipFile implements ZipFileInterface
             $unixMode = $entry->getUnixMode();
             $entryName = FilesUtil::normalizeZipPath($entryName);
             $file = $destDir . \DIRECTORY_SEPARATOR . $entryName;
-            
+            //Add Chinese Support by @yhiving START 
             $file = $this->transcoding($file);
-
-            if (\DIRECTORY_SEPARATOR === '\\') {
-                $file = str_replace('/', '\\', $file);
-            }
+            //Add Chinese Support by @yhiving END 
             $extractedEntries[$file] = $entry;
             $modifyTimestamp = $entry->getMTime()->getTimestamp();
             $atime = $entry->getATime();
@@ -584,19 +580,12 @@ class ZipFile implements ZipFileInterface
      */
     public function addFromString($entryName, $contents, $compressionMethod = null)
     {
-        if ($entryName === null) {
-            throw new InvalidArgumentException('Entry name is null');
-        }
+        $entryName = $this->normalizeEntryName($entryName);
 
         if ($contents === null) {
             throw new InvalidArgumentException('Contents is null');
         }
 
-        $entryName = ltrim((string) $entryName, '\\/');
-
-        if ($entryName === '') {
-            throw new InvalidArgumentException('Empty entry name');
-        }
         $contents = (string) $contents;
         $length = \strlen($contents);
 
@@ -626,6 +615,30 @@ class ZipFile implements ZipFileInterface
     }
 
     /**
+     * @param string $entryName
+     *
+     * @return string
+     */
+    protected function normalizeEntryName($entryName)
+    {
+        if ($entryName === null) {
+            throw new InvalidArgumentException('Entry name is null');
+        }
+
+        $entryName = ltrim((string) $entryName, '\\/');
+
+        if (\DIRECTORY_SEPARATOR === '\\') {
+            $entryName = str_replace('\\', '/', $entryName);
+        }
+
+        if ($entryName === '') {
+            throw new InvalidArgumentException('Empty entry name');
+        }
+
+        return $entryName;
+    }
+
+    /**
      * @param Finder $finder
      * @param array  $options
      *
@@ -640,6 +653,7 @@ class ZipFile implements ZipFileInterface
             ZipOptions::COMPRESSION_METHOD => null,
             ZipOptions::MODIFIED_TIME => null,
         ];
+        /** @noinspection AdditionOperationOnArraysInspection */
         $options += $defaultOptions;
 
         if ($options[ZipOptions::STORE_ONLY_FILES]) {
@@ -676,6 +690,7 @@ class ZipFile implements ZipFileInterface
             ZipOptions::COMPRESSION_METHOD => null,
             ZipOptions::MODIFIED_TIME => null,
         ];
+        /** @noinspection AdditionOperationOnArraysInspection */
         $options += $defaultOptions;
 
         if (!$file->isReadable()) {
@@ -690,12 +705,7 @@ class ZipFile implements ZipFileInterface
             }
         }
 
-        $entryName = ltrim((string) $entryName, '\\/');
-
-        if ($entryName === '') {
-            throw new InvalidArgumentException('Empty entry name');
-        }
-
+        $entryName = $this->normalizeEntryName($entryName);
         $entryName = $file->isDir() ? rtrim($entryName, '/\\') . '/' : $entryName;
 
         $zipEntry = new ZipEntry($entryName);
@@ -830,17 +840,9 @@ class ZipFile implements ZipFileInterface
             throw new InvalidArgumentException('Stream is not resource');
         }
 
-        if ($entryName === null) {
-            throw new InvalidArgumentException('Entry name is null');
-        }
-        $entryName = ltrim((string) $entryName, '\\/');
-
-        if ($entryName === '') {
-            throw new InvalidArgumentException('Empty entry name');
-        }
-        $fstat = fstat($stream);
-
+        $entryName = $this->normalizeEntryName($entryName);
         $zipEntry = new ZipEntry($entryName);
+        $fstat = fstat($stream);
 
         if ($fstat !== false) {
             $unixMode = $fstat['mode'];
@@ -891,14 +893,7 @@ class ZipFile implements ZipFileInterface
      */
     public function addEmptyDir($dirName)
     {
-        if ($dirName === null) {
-            throw new InvalidArgumentException('Dir name is null');
-        }
-        $dirName = ltrim((string) $dirName, '\\/');
-
-        if ($dirName === '') {
-            throw new InvalidArgumentException('Empty dir name');
-        }
+        $dirName = $this->normalizeEntryName($dirName);
         $dirName = rtrim($dirName, '\\/') . '/';
 
         $zipEntry = new ZipEntry($dirName);
@@ -1093,6 +1088,7 @@ class ZipFile implements ZipFileInterface
      * @throws ZipException
      *
      * @return ZipFile
+     *
      * @sse https://en.wikipedia.org/wiki/Glob_(programming) Glob pattern syntax
      */
     private function addGlob(
@@ -1620,19 +1616,39 @@ class ZipFile implements ZipFileInterface
     {
         $filename = (string) $filename;
 
-        $tempFilename = $filename . '.temp' . uniqid('', true);
+        $tempFilename = $filename . '.temp' . uniqid('', false);
 
         if (!($handle = @fopen($tempFilename, 'w+b'))) {
-            throw new InvalidArgumentException('File ' . $tempFilename . ' can not open from write.');
+            throw new InvalidArgumentException(sprintf('Cannot open "%s" for writing.', $tempFilename));
         }
         $this->saveAsStream($handle);
+
+        $reopen = false;
+
+        if ($this->reader !== null) {
+            $meta = $this->reader->getStreamMetaData();
+
+            if ($meta['wrapper_type'] === 'plainfile' && isset($meta['uri'])) {
+                $readFilePath = realpath($meta['uri']);
+                $writeFilePath = realpath($filename);
+
+                if ($readFilePath !== false && $writeFilePath !== false && $readFilePath === $writeFilePath) {
+                    $this->reader->close();
+                    $reopen = true;
+                }
+            }
+        }
 
         if (!@rename($tempFilename, $filename)) {
             if (is_file($tempFilename)) {
                 unlink($tempFilename);
             }
 
-            throw new ZipException('Can not move ' . $tempFilename . ' to ' . $filename);
+            throw new ZipException(sprintf('Cannot move %s to %s', $tempFilename, $filename));
+        }
+
+        if ($reopen) {
+            return $this->openFile($filename);
         }
 
         return $this;
@@ -1838,24 +1854,11 @@ class ZipFile implements ZipFileInterface
 
         $meta = $this->reader->getStreamMetaData();
 
-        if ($meta['wrapper_type'] === 'plainfile' && isset($meta['uri'])) {
-            $this->saveAsFile($meta['uri']);
-            $this->close();
-
-            if (!($handle = @fopen($meta['uri'], 'rb'))) {
-                throw new ZipException("File {$meta['uri']} can't open.");
-            }
-        } else {
-            $handle = @fopen('php://temp', 'r+b');
-
-            if (!$handle) {
-                throw new ZipException('php://temp cannot open for write.');
-            }
-            $this->writeZipToStream($handle);
-            $this->close();
+        if ($meta['wrapper_type'] !== 'plainfile' || !isset($meta['uri'])) {
+            throw new ZipException('Overwrite is only supported for open local files.');
         }
 
-        return $this->openFromStream($handle);
+        return $this->saveAsFile($meta['uri']);
     }
 
     /**
